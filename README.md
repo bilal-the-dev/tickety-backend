@@ -1,0 +1,21 @@
+```json
+# API RELATED STUFF
+NODE_ENV=development
+BASE_URL=/api/v1
+ALLOWED_ORIGINS=http://localhost:5500,http://localhost:5713
+MONGO_URI=mongodb+srv://thisIsDummy@cluster0.hhpyoj3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+
+# JWT AND COOKIES STUFF
+JWT_EXPIRES_IN=7d
+JWT_COOKIE_EXPIRES_IN=7
+JWT_SECRET=ThisIsAJWTSecretThatNoOneCanGuessLOL
+
+# DISCORD CREDENTIALS
+DISCORD_API_BASE_URL=https://discord.com/api/v10
+DISCORD_BOT_TOKEN=DISCORD_BOT_TOKEN
+CLIENT_ID=DISCORD_BOT_ID
+CLIENT_SECRET=DISCORD_BOT_CLIENT_SCERET
+REDIRECT_URI=http://localhost:2000
+```
+
+Here's what you need for configuration
