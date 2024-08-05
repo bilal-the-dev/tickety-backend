@@ -1,4 +1,4 @@
-```json
+```bash
 # API RELATED STUFF
 NODE_ENV=development
 BASE_URL=/api/v1
