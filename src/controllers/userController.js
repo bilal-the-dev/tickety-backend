@@ -1,7 +1,7 @@
 const catchAsync = require("../utils/catchAsync");
 const { fetchUserGuildsOauth } = require("../utils/discordOauth");
 
-exports.getCurrentUser = catchAsync((req, res, next) => {
+exports.getCurrentUser = catchAsync(async (req, res, next) => {
   res.json({ status: "success", data: req.discordUser });
 });
 
