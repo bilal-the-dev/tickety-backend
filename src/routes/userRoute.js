@@ -6,7 +6,7 @@ const {
 
 const router = express.Router();
 
-router.get("/me", getCurrentUser);
-router.get("/me/guilds", getCurrentUserGuilds);
+router.get("/@me", getCurrentUser);
+router.get("/@me/guilds", getCurrentUserGuilds);
 
 module.exports = router;
