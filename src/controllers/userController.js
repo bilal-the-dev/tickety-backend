@@ -7,5 +7,5 @@ exports.getCurrentUser = catchAsync(async (req, res, next) => {
 
 exports.getCurrentUserGuilds = catchAsync(async (req, res, next) => {
   const guilds = await fetchUserGuildsOauth(req.dbUser.accessToken);
-  res.json({ status: "success", data: guilds });
+  res.json({ status: "success", data: { user: req.discordUser, guilds } });
 });
