@@ -15,7 +15,6 @@ const app = express();
 const { NODE_ENV, ALLOWED_ORIGINS, BASE_URL } = process.env;
 
 // 1) GLOBAL MIDDLEWARES
-
 if (NODE_ENV === "development") app.use(morgan("dev"));
 
 // setting cors, cross site requests can then access our api by allowing origin and setting creds true we can receive and set cookies
