@@ -4,6 +4,7 @@ const {
   updateGuildSettings,
   getResponderById,
   createResponder,
+  deleteResponderById,
 } = require("../controllers/guildController");
 
 const router = express.Router();
@@ -15,5 +16,7 @@ router.post("/:guildId/autoresponders", createResponder);
 
 router.patch("/:guildId/settings", updateGuildSettings);
 router.patch("/:guildId/autoresponders/:responderId", updateGuildSettings);
+
+router.delete("/:guildId/autoresponders/:responderId", deleteResponderById);
 
 module.exports = router;

@@ -4,6 +4,7 @@ const { Guilds } = require("shared-models");
 
 const catchAsync = require("../utils/catchAsync");
 const { fetchCachefromBot } = require("../utils/botAPI");
+const AppError = require("../utils/appError");
 
 exports.getGuildSettings = catchAsync(async (req, res, next) => {
   const {
@@ -126,29 +127,23 @@ exports.updateGuildSettings = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.updateGuildSettings = catchAsync(async (req, res, next) => {
+exports.deleteResponderById = catchAsync(async (req, res, next) => {
   const {
-    params: { guildId },
-    body,
-    discordUser,
+    params: { guildId, responderId },
   } = req;
 
-  delete body.guildId;
+  const doc = await Guilds.findOne(
+    { guildId, [`autoResponders._id`]: responderId },
+    { ["autoResponders"]: 1 }
+  );
 
-  const obj = {};
+  if (!doc) throw new AppError("Responder not found", 404);
 
-  Object.entries(body).forEach((e) => {
-    const [key, val] = e;
+  const i = doc.autoResponders.findIndex((d) => d._id === responderId);
 
-    obj[`discordSettings.${key}`] = val;
-  });
+  doc.autoResponders.splice(i, 1);
 
-  const settings = await Guilds.findOneAndUpdate({ guildId }, obj, {
-    new: true,
-  });
+  await doc.save();
 
-  res.json({
-    status: "success",
-    data: { user: discordUser, settings },
-  });
+  res.status(204).json();
 });
