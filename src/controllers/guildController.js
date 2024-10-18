@@ -44,6 +44,8 @@ exports.updateGuildSettings = catchAsync(async (req, res, next) => {
 
     Object.entries(val).forEach((e) => {
       const [nestedK, nestedVal] = e;
+
+      if (nestedK.startsWith("_")) return;
       obj[`discordSettings.${key}.${nestedK}`] = nestedVal;
     });
   });
