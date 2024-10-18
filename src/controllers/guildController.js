@@ -61,7 +61,7 @@ exports.getResponderById = catchAsync(async (req, res, next) => {
     {
       [`autoResponders.$`]: 1,
     }
-  );
+  ).lean();
 
   const data = { responder: responders?.autoResponders[0], cache };
 
