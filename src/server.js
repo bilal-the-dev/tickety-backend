@@ -10,6 +10,11 @@ mongoose
   .connect(MONGO_URI)
   .then(async () => {
     console.log("Connected to database");
+
+    // await Guilds.findOneAndUpdate(
+    //   { guildId: "233434344" },
+    //   { $push: { autoResponders: { trigger: "h", reply: "334" } } }
+    // );
   })
   .catch(console.log);
 const server = app.listen(PORT, () => {
