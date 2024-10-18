@@ -7,9 +7,10 @@ const { PORT = 3000, MONGO_URI } = process.env;
 
 mongoose
   .connect(MONGO_URI)
-  .then(() => console.log("Connected to database"))
+  .then(async () => {
+    console.log("Connected to database");
+  })
   .catch(console.log);
-
 const server = app.listen(PORT, () => {
   console.log(`Server is running at port ${PORT}`);
 });
