@@ -1,3 +1,5 @@
+const AppError = require("./appError");
+
 const { BOT_API_BASE_URL } = process.env;
 
 exports.filterBotOnlyGuilds = async (guilds) => {
@@ -5,6 +7,8 @@ exports.filterBotOnlyGuilds = async (guilds) => {
     method: "POST",
     body: JSON.stringify(guilds),
   });
+
+  if (!res.ok) throw new AppError("Something went wrong", 500);
 
   return await res.json();
 };
