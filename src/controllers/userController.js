@@ -15,7 +15,13 @@ exports.getCurrentUserGuilds = catchAsync(async (req, res, next) => {
   if (adminOnly == "true")
     guilds = guilds.filter((g) => (g.permissions & ADMIN_BIT) == ADMIN_BIT);
 
-  if (botOnlyProp == "true") guilds = await addIsBotPresentProp(guilds);
+  const data = { user: req.discordUser, guilds };
+  if (botOnlyProp == "true") {
+    const { inviteURL, modifiedGuilds } = await addIsBotPresentProp(guilds);
 
-  res.json({ status: "success", data: { user: req.discordUser, guilds } });
+    data.inviteURL = inviteURL;
+    data.guilds = modifiedGuilds;
+  }
+
+  res.json({ status: "success", data });
 });
