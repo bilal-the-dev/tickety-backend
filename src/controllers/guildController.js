@@ -1,31 +1,26 @@
+const queryString = require("node:querystring");
+
 const { Guilds } = require("shared-models");
+
 const catchAsync = require("../utils/catchAsync");
-const { fetchRolesfromBot } = require("../utils/botAPI");
+const { fetchCachefromBot } = require("../utils/botAPI");
 
 exports.getGuildSettings = catchAsync(async (req, res, next) => {
   const {
     params: { guildId },
+    query,
     discordUser,
   } = req;
 
-  const doc = await Guilds.findOne({ guildId });
+  const str = queryString.stringify(query);
+  console.log(str);
 
-  const fetchedRoles = res.json({
-    status: "success",
-    data: { user: discordUser, settings: doc },
-  });
-});
+  const cache = await fetchCachefromBot(guildId, str);
 
-exports.getGuildRoles = catchAsync(async (req, res, next) => {
-  const {
-    params: { guildId },
-    discordUser,
-  } = req;
-
-  const roles = await fetchRolesfromBot(guildId);
+  let settings = await Guilds.findOne({ guildId });
 
   res.json({
     status: "success",
-    data: { user: discordUser, roles },
+    data: { user: discordUser, settings, cache },
   });
 });

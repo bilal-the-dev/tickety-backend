@@ -7,6 +7,5 @@ const {
 const router = express.Router();
 
 router.get("/:guildId/settings", getGuildSettings);
-router.get("/:guildId/roles", getGuildRoles);
 
 module.exports = router;

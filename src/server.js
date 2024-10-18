@@ -2,6 +2,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 
 const app = require("./app.js");
+const { Guilds } = require("shared-models");
 
 const { PORT = 3000, MONGO_URI } = process.env;
 
