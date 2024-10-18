@@ -127,6 +127,35 @@ exports.updateGuildSettings = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.updateResponderById = catchAsync(async (req, res, next) => {
+  const {
+    params: { guildId, responderId },
+    body,
+    discordUser,
+  } = req;
+
+  body._id = responderId;
+
+  //   const obj = {};
+
+  //   Object.entries(body).forEach((e) => {
+  //     const [key, val] = e;
+
+  //     obj[`discordSettings.${key}`] = val;
+  //   });
+
+  const doc = await Guilds.findOneAndUpdate(
+    { guildId, [`autoResponders._id`]: responderId },
+    { ["autoResponders.$"]: body },
+    { new: true }
+  );
+
+  res.json({
+    status: "success",
+    data: { user: discordUser, doc },
+  });
+});
+
 exports.deleteResponderById = catchAsync(async (req, res, next) => {
   const {
     params: { guildId, responderId },
