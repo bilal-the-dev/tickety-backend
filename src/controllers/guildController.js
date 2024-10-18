@@ -161,18 +161,18 @@ exports.deleteResponderById = catchAsync(async (req, res, next) => {
     params: { guildId, responderId },
   } = req;
 
-  const doc = await Guilds.findOne(
-    { guildId, [`autoResponders._id`]: responderId },
-    { ["autoResponders"]: 1 }
+  await Guilds.findOneAndUpdate(
+    { guildId },
+    { $pull: { autoResponders: { _id: responderId } } }
   );
 
-  if (!doc) throw new AppError("Responder not found", 404);
+  //   if (!doc) throw new AppError("Responder not found", 404);
 
-  const i = doc.autoResponders.findIndex((d) => d._id === responderId);
+  //   const i = doc.autoResponders.findIndex((d) => d._id === responderId);
 
-  doc.autoResponders.splice(i, 1);
+  //   doc.autoResponders.splice(i, 1);
 
-  await doc.save();
+  //   await doc.save();
 
   res.status(204).json();
 });
