@@ -12,3 +12,11 @@ exports.addIsBotPresentProp = async (guilds) => {
 
   return await res.json();
 };
+
+exports.fetchRolesfromBot = async (guildId) => {
+  const res = await fetch(`${BOT_API_BASE_URL}/guilds/${guildId}/roles`);
+
+  if (!res.ok) throw new AppError("Something went wrong", 500);
+
+  return await res.json();
+};
