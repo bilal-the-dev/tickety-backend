@@ -14,5 +14,6 @@ router.get("/:guildId/autoresponders/:responderId", getResponderById);
 router.post("/:guildId/autoresponders", createResponder);
 
 router.patch("/:guildId/settings", updateGuildSettings);
+router.patch("/:guildId/autoresponders/:responderId", updateGuildSettings);
 
 module.exports = router;
