@@ -77,6 +77,17 @@ exports.updatePanelById = catchAsync(async (req, res, next) => {
   delete body.guildId;
   const doc = await Panels.findByIdAndUpdate(panelId, body, { new: true });
 
+  if (doc.panelChannelId) {
+    const b = generateMessageBody(doc.toJSON());
+
+    await dealWithMessage(
+      doc.panelChannelId,
+      JSON.stringify(b),
+      "PATCH",
+      `messages/${doc.panelMessageId}`
+    );
+  }
+
   sendResponse(req, res, doc);
 });
 
