@@ -2,11 +2,11 @@ const AppError = require("./appError");
 
 const { DISCORD_BOT_TOKEN, DISCORD_API_BASE_URL } = process.env;
 
-exports.sendMessage = async (channelId, body) => {
+exports.dealWithMessage = async (channelId, body, method, url) => {
   const res = await fetch(
-    `${DISCORD_API_BASE_URL}/channels/${channelId}/messages`,
+    `${DISCORD_API_BASE_URL}/channels/${channelId}/${url}`,
     {
-      method: "POST",
+      method,
       headers: {
         Authorization: `Bot ${DISCORD_BOT_TOKEN}`,
         "content-type": "application/json",
@@ -14,12 +14,6 @@ exports.sendMessage = async (channelId, body) => {
       body,
     }
   );
-
-  const e = await res.json();
-
-  console.log(e.errors);
-
-  console.log(e.errors?.components["0"].components["0"]);
 
   if (res.status === 404) throw new AppError("Channel not found", 404);
   if (res.status === 403)
@@ -30,5 +24,5 @@ exports.sendMessage = async (channelId, body) => {
 
   if (!res.ok) throw new AppError("Something went wrong", 500);
 
-  return e;
+  return res;
 };

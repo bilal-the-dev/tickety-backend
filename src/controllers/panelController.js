@@ -2,7 +2,7 @@ const { Panels } = require("shared-models");
 const catchAsync = require("../utils/catchAsync");
 const { sendResponse } = require("../utils/sendResponse");
 const AppError = require("../utils/appError");
-const { sendMessage } = require("../utils/discordAPI");
+const { dealWithMessage } = require("../utils/discordAPI");
 
 exports.getPanelsForGuild = catchAsync(async (req, res, next) => {
   const {
@@ -43,7 +43,7 @@ exports.createPanel = catchAsync(async (req, res, next) => {
 
 exports.publishPanel = catchAsync(async (req, res, next) => {
   const {
-    params: { panelId, channelId },
+    params: { panelId, channelId: panelChannelId },
   } = req;
 
   const doc = await Panels.findById(panelId).lean();
@@ -52,8 +52,20 @@ exports.publishPanel = catchAsync(async (req, res, next) => {
 
   const body = generateMessageBody(doc);
 
-  const response = await sendMessage(channelId, JSON.stringify(body));
-  sendResponse(req, res, response);
+  const response = await dealWithMessage(
+    panelChannelId,
+    JSON.stringify(body),
+    "POST",
+    "messages"
+  );
+
+  const m = await response.json();
+
+  await Panels.findByIdAndUpdate(panelId, {
+    panelChannelId,
+    panelMessageId: m.id,
+  });
+  sendResponse(req, res, m);
 });
 
 exports.updatePanelById = catchAsync(async (req, res, next) => {
@@ -73,7 +85,20 @@ exports.deletePanelById = catchAsync(async (req, res, next) => {
     params: { panelId },
   } = req;
 
-  await Panels.findByIdAndDelete(panelId);
+  const doc = await Panels.findById(panelId);
+
+  if (!doc) throw new AppError("Panel already deleted", 400);
+
+  if (doc.panelChannelId) {
+    await dealWithMessage(
+      doc.panelChannelId,
+      null,
+      "DELETE",
+      `messages/${doc.panelMessageId}`
+    );
+  }
+
+  await doc.deleteOne();
 
   res.status(204).json();
 });
