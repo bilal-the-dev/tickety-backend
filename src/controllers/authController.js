@@ -7,6 +7,7 @@ const {
   getDiscordUserFromToken,
   isLoggedIn,
 } = require("../utils/discordOauth");
+const { sendResponse } = require("../utils/sendResponse");
 
 exports.login = catchAsync(async (req, res, next) => {
   const {
@@ -22,7 +23,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
   if (!code && cookies.JWT) {
     await isLoggedIn(req);
-    return res.json({ status: "success", data: req.discordUser });
+    return sendResponse(req, res, req.discordUser);
   }
 
   if (code && !cookies.JWT) data = await getAccessTokenFromCode(code);
@@ -54,7 +55,7 @@ exports.logout = catchAsync(async (req, res, next) => {
     expires: new Date(Date.now() - 1000),
     // httpOnly: true,
   });
-  res.json({ status: "success" });
+  sendResponse(req, res);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {

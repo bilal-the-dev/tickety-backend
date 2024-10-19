@@ -6,14 +6,21 @@ const {
   createResponder,
   deleteResponderById,
   updateResponderById,
+  addCacheIfInQuery,
 } = require("../controllers/guildController");
 
 const router = express.Router();
 
-router.get("/:guildId/settings", getGuildSettings);
-router.get("/:guildId/autoresponders/:responderId", getResponderById);
+router.use(addCacheIfInQuery);
 
-router.post("/:guildId/autoresponders", createResponder);
+router.get("/:guildId/settings", addCacheIfInQuery, getGuildSettings);
+router.get(
+  "/:guildId/autoresponders/:responderId",
+  addCacheIfInQuery,
+  getResponderById
+);
+
+router.post("/:guildId", createResponder);
 
 router.patch("/:guildId/settings", updateGuildSettings);
 router.patch("/:guildId/autoresponders/:responderId", updateResponderById);

@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const discordAuthRouter = require("./routes/discordAuthRoute");
 const userRouter = require("./routes/userRoute");
 const guildRouter = require("./routes/guildRoute");
+const panelRouter = require("./routes/panelRoute");
 const globalErrorMiddleware = require("./controllers/errorController");
 const AppError = require("./utils/appError");
 const { protect } = require("./controllers/authController");
@@ -36,6 +37,7 @@ app.use(`${BASE_URL}/auth/discord`, discordAuthRouter);
 app.use(protect); // populates req.dbUser and req.discordUser
 app.use(`${BASE_URL}/users`, userRouter);
 app.use(`${BASE_URL}/guilds`, guildRouter);
+app.use(`${BASE_URL}/panels`, panelRouter);
 
 // can use app.all(*) as well but .use() makes more sense since .all works for a specific route say /test but use would work with /test/23 as well
 // synchronouse code, if throws error, will be sent to error middleware. A promise returning fuunction that rejects promise also forwards error

@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { sendResponse } = require("./sendResponse");
 
 exports.setJWTCookie = async (user, req, res) => {
   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
@@ -13,5 +14,6 @@ exports.setJWTCookie = async (user, req, res) => {
     secure: req.secure || req.headers["x-forwarded-proto"] === "https",
   });
 
-  res.json({ status: "success", data: user });
+  sendResponse(req, res, user);
+  // res.json({ status: "success", data: user });
 };

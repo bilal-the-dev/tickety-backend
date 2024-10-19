@@ -1,9 +1,10 @@
 const { addIsBotPresentProp } = require("../utils/botAPI");
 const catchAsync = require("../utils/catchAsync");
 const { fetchUserGuildsOauth } = require("../utils/discordOauth");
+const { sendResponse } = require("../utils/sendResponse");
 
 exports.getCurrentUser = catchAsync(async (req, res, next) => {
-  res.json({ status: "success", data: req.discordUser });
+  sendResponse(req, res, req.discordUser);
 });
 
 exports.getCurrentUserGuilds = catchAsync(async (req, res, next) => {
@@ -15,7 +16,7 @@ exports.getCurrentUserGuilds = catchAsync(async (req, res, next) => {
   if (adminOnly == "true")
     guilds = guilds.filter((g) => (g.permissions & ADMIN_BIT) == ADMIN_BIT);
 
-  const data = { user: req.discordUser, guilds };
+  const data = { guilds };
   if (botOnlyProp == "true") {
     const { inviteURL, modifiedGuilds } = await addIsBotPresentProp(guilds);
 
@@ -23,5 +24,5 @@ exports.getCurrentUserGuilds = catchAsync(async (req, res, next) => {
     data.guilds = modifiedGuilds;
   }
 
-  res.json({ status: "success", data });
+  sendResponse(req, res, data);
 });

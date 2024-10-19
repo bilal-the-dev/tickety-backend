@@ -1,23 +1,20 @@
+const { sendResponse } = require("../utils/sendResponse");
+
 const queryString = require("node:querystring");
 
 const { Guilds } = require("shared-models");
 
 const catchAsync = require("../utils/catchAsync");
 const { fetchCachefromBot } = require("../utils/botAPI");
-const AppError = require("../utils/appError");
 
 exports.getGuildSettings = catchAsync(async (req, res, next) => {
   const {
     params: { guildId },
     query,
-    discordUser,
+    cache,
   } = req;
 
   const { withDiscordSettings, withAutoResponders } = query;
-
-  const str = queryString.stringify(query);
-
-  const cache = await fetchCachefromBot(guildId, str);
 
   let settings;
 
@@ -37,27 +34,17 @@ exports.getGuildSettings = catchAsync(async (req, res, next) => {
 
   const data = { settings, cache };
 
-  if (query.withUser == "true") data.user = discordUser;
-  res.json({
-    status: "success",
-    data,
-  });
+  sendResponse(req, res, data);
 });
 
 exports.getResponderById = catchAsync(async (req, res, next) => {
   const {
     params: { guildId, responderId },
-    query,
-    discordUser,
+    cache,
   } = req;
-
-  const str = queryString.stringify(query);
-
-  const cache = await fetchCachefromBot(guildId, str);
 
   const responders = await Guilds.findOne(
     { guildId, [`autoResponders._id`]: responderId },
-    // { $and: [{ guildId }, { [`autoResponders._id`]: responderId }] },
     {
       [`autoResponders.$`]: 1,
     }
@@ -65,22 +52,16 @@ exports.getResponderById = catchAsync(async (req, res, next) => {
 
   const data = { responder: responders?.autoResponders[0], cache };
 
-  if (query.withUser == "true") data.user = discordUser;
-  res.json({
-    status: "success",
-    data,
-  });
+  sendResponse(req, res, data);
 });
 
 exports.createResponder = catchAsync(async (req, res, next) => {
   const {
     params: { guildId },
     body,
-    query,
-    discordUser,
   } = req;
 
-  const responder = await Guilds.findOneAndUpdate(
+  const doc = await Guilds.findOneAndUpdate(
     { guildId },
 
     {
@@ -88,23 +69,18 @@ exports.createResponder = catchAsync(async (req, res, next) => {
         autoResponders: body,
       },
     },
-    { runValidators: true }
+    { runValidators: true, new: true }
   );
 
-  const data = { responder };
+  res.status(201);
 
-  if (query.withUser == "true") data.user = discordUser;
-  res.json({
-    status: "success",
-    data,
-  });
+  sendResponse(req, res, { doc });
 });
 
 exports.updateGuildSettings = catchAsync(async (req, res, next) => {
   const {
     params: { guildId },
     body,
-    discordUser,
   } = req;
 
   delete body.guildId;
@@ -121,28 +97,16 @@ exports.updateGuildSettings = catchAsync(async (req, res, next) => {
     new: true,
   });
 
-  res.json({
-    status: "success",
-    data: { user: discordUser, settings },
-  });
+  sendResponse(req, res, settings);
 });
 
 exports.updateResponderById = catchAsync(async (req, res, next) => {
   const {
     params: { guildId, responderId },
     body,
-    discordUser,
   } = req;
 
   body._id = responderId;
-
-  //   const obj = {};
-
-  //   Object.entries(body).forEach((e) => {
-  //     const [key, val] = e;
-
-  //     obj[`discordSettings.${key}`] = val;
-  //   });
 
   const doc = await Guilds.findOneAndUpdate(
     { guildId, [`autoResponders._id`]: responderId },
@@ -150,10 +114,7 @@ exports.updateResponderById = catchAsync(async (req, res, next) => {
     { new: true }
   );
 
-  res.json({
-    status: "success",
-    data: { user: discordUser, doc },
-  });
+  sendResponse(req, res, doc);
 });
 
 exports.deleteResponderById = catchAsync(async (req, res, next) => {
@@ -166,13 +127,18 @@ exports.deleteResponderById = catchAsync(async (req, res, next) => {
     { $pull: { autoResponders: { _id: responderId } } }
   );
 
-  //   if (!doc) throw new AppError("Responder not found", 404);
-
-  //   const i = doc.autoResponders.findIndex((d) => d._id === responderId);
-
-  //   doc.autoResponders.splice(i, 1);
-
-  //   await doc.save();
-
   res.status(204).json();
+});
+
+exports.addCacheIfInQuery = catchAsync(async (req, res, next) => {
+  const { query, method } = req;
+
+  if (method !== "GET" || !query.guildId) return next();
+
+  const str = queryString.stringify(query);
+
+  const cache = await fetchCachefromBot(query.guildId, str);
+
+  req.cache = cache;
+  next();
 });
