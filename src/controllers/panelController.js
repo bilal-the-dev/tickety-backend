@@ -36,6 +36,16 @@ exports.createPanel = catchAsync(async (req, res, next) => {
     cache,
   } = req;
 
+  if (body?.panelEmbed?.hexColor)
+    body.panelEmbed.color = parseInt(
+      body.panelEmbed.hexColor.replace("#", ""),
+      16
+    );
+  if (body?.ticketEmbed?.hexColor)
+    body.ticketEmbed.color = parseInt(
+      body.ticketEmbed.hexColor.replace("#", ""),
+      16
+    );
   const doc = await Panels.create({ guildId, ...body });
 
   sendResponse(req, res, { cache, doc });
@@ -75,6 +85,17 @@ exports.updatePanelById = catchAsync(async (req, res, next) => {
   } = req;
 
   delete body.guildId;
+
+  if (body?.panelEmbed?.hexColor)
+    body.panelEmbed.color = parseInt(
+      body.panelEmbed.hexColor.replace("#", ""),
+      16
+    );
+  if (body?.ticketEmbed?.hexColor)
+    body.ticketEmbed.color = parseInt(
+      body.ticketEmbed.hexColor.replace("#", ""),
+      16
+    );
   const doc = await Panels.findByIdAndUpdate(panelId, body, { new: true });
 
   if (doc.panelChannelId) {
@@ -118,6 +139,8 @@ function generateMessageBody(doc) {
   const enums = { Primary: 1, Secondary: 2, Success: 3, Danger: 4 };
 
   doc.panelButton.style = enums[doc.panelButton.style];
+
+  console.log(doc.panelEmbed);
 
   const body = {
     embeds: [doc.panelEmbed],

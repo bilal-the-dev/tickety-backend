@@ -15,6 +15,24 @@ exports.dealWithMessage = async (channelId, body, method, url) => {
     }
   );
 
+  if (res.status === 400) {
+    const {
+      errors: { components, embeds },
+    } = await res.json();
+
+    console.log(embeds);
+    console.log(components);
+
+    if (components) {
+      console.log(components["0"].components[0]);
+      const k = Object.values(components["0"].components[0].emoji)[0]
+        ._errors[0];
+      console.log(k);
+    }
+    if (embeds) {
+    }
+  }
+
   if (res.status === 404) throw new AppError("Channel not found", 404);
   if (res.status === 403)
     throw new AppError(
