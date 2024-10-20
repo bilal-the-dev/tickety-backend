@@ -12,7 +12,7 @@ exports.getPanelsForGuild = catchAsync(async (req, res, next) => {
 
   const panels = await Panels.find(
     { guildId },
-    { ticketOpenCategoryId: 1, panelName: 1 }
+    { ticketOpenCategoryId: 1, panelName: 1, openedTickets: 1 }
   ).lean();
 
   sendResponse(req, res, { cache, panels });
