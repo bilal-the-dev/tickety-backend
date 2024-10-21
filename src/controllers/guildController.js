@@ -15,11 +15,13 @@ exports.getGuildSettings = catchAsync(async (req, res, next) => {
     cache,
   } = req;
 
-  const { withDiscordSettings, withAutoResponders } = query;
+  const { withDiscordSettings, withAutoResponders, withStats } = query;
+
+  console.log(query);
 
   let settings;
 
-  if (withDiscordSettings || withAutoResponders)
+  if (withDiscordSettings || withAutoResponders || withStats)
     settings = await Guilds.findOne(
       { guildId },
       {
