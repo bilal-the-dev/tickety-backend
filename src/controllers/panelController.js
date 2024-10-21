@@ -27,6 +27,8 @@ exports.getAllTickets = catchAsync(async (req, res, next) => {
     cache,
   } = req;
 
+  console.log(guildId);
+
   const tickets = await Tickets.find({ guildId }).populate("panelId");
 
   sendResponse(req, res, { cache, tickets });
