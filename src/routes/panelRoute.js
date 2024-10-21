@@ -8,7 +8,10 @@ const {
   updatePanelById,
   publishPanel,
 } = require("../controllers/panelController");
-const { addCacheIfInQuery } = require("../controllers/guildController");
+const {
+  addCacheIfInQuery,
+  isAdmin,
+} = require("../controllers/guildController");
 
 const router = express.Router();
 
