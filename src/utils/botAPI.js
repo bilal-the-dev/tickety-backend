@@ -22,3 +22,12 @@ exports.fetchCachefromBot = async (guildId, query) => {
 
   return await res.json();
 };
+exports.checkIsAdmin = async (guildId, userId) => {
+  const res = await fetch(
+    `${BOT_API_BASE_URL}/guilds/${guildId}/admin/${userId}`
+  );
+
+  if (!res.ok) throw new AppError("Something went wrong", 500);
+
+  return await res.json();
+};

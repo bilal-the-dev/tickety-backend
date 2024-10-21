@@ -5,7 +5,8 @@ const queryString = require("node:querystring");
 const { Guilds } = require("shared-models");
 
 const catchAsync = require("../utils/catchAsync");
-const { fetchCachefromBot } = require("../utils/botAPI");
+const { fetchCachefromBot, checkIsAdmin } = require("../utils/botAPI");
+const AppError = require("../utils/appError");
 
 exports.getGuildSettings = catchAsync(async (req, res, next) => {
   const {
@@ -24,6 +25,7 @@ exports.getGuildSettings = catchAsync(async (req, res, next) => {
       {
         guildId: 1,
         ...(query.withDiscordSettings && { discordSettings: 1 }),
+        ...(query.withStats && { openedTickets: 1, closedTickets: 1 }),
         ...(query.withAutoResponders && {
           [`autoResponders.trigger`]: 1,
           [`autoResponders.reply`]: 1,
@@ -140,5 +142,18 @@ exports.addCacheIfInQuery = catchAsync(async (req, res, next) => {
   const cache = await fetchCachefromBot(query.guildId, str);
 
   req.cache = cache;
+  next();
+});
+
+exports.isAdmin = catchAsync(async (req, res, next) => {
+  const {
+    params: { guildId },
+    discordUser,
+  } = req;
+
+  const response = await checkIsAdmin(guildId, discordUser.userId);
+
+  if (!response.isAdmin)
+    throw new AppError("You are not authorized to perform this operation", 403);
   next();
 });

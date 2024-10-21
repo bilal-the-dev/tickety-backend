@@ -14,10 +14,10 @@ const router = express.Router();
 
 router.use(addCacheIfInQuery);
 
-router.get("/guild/:guildId/", getPanelsForGuild);
+router.get("/guild/:guildId/", isAdmin, getPanelsForGuild);
 router.get("/:panelId", getPanelById);
 
-router.post("/:guildId/", createPanel);
+router.post("/:guildId/", isAdmin, createPanel);
 router.post("/:panelId/publish/:channelId", publishPanel);
 
 router.patch("/:panelId/", updatePanelById);
