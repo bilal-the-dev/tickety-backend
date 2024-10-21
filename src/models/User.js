@@ -4,6 +4,7 @@ const reqString = { type: String, required: true };
 
 const userSchema = new mongoose.Schema({
   userId: reqString,
+  username: reqString,
   accessToken: reqString,
   refreshToken: reqString,
 });

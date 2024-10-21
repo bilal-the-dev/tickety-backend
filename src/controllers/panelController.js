@@ -46,6 +46,8 @@ exports.createPanel = catchAsync(async (req, res, next) => {
       body.ticketEmbed.hexColor.replace("#", ""),
       16
     );
+
+  body.creatorName = req.discorsUser.username;
   const doc = await Panels.create({ guildId, ...body });
 
   sendResponse(req, res, { cache, doc });

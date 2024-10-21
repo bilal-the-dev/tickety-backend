@@ -43,6 +43,7 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!userDoc)
     await User.create({
       userId: discordUser.id,
+      username: discordUser.username,
       accessToken: data.access_token,
       refreshToken: data.refresh_token,
     });
