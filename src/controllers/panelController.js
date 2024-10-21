@@ -1,4 +1,4 @@
-const { Panels } = require("shared-models");
+const { Panels, Tickets } = require("shared-models");
 const catchAsync = require("../utils/catchAsync");
 const { sendResponse } = require("../utils/sendResponse");
 const AppError = require("../utils/appError");
@@ -16,12 +16,20 @@ exports.getPanelsForGuild = catchAsync(async (req, res, next) => {
       ticketOpenCategoryId: 1,
       panelName: 1,
       openedTickets: 1,
-      creatorName: 1,
-      createdAt: 1,
     }
   ).lean();
 
   sendResponse(req, res, { cache, panels });
+});
+exports.getAllTickets = catchAsync(async (req, res, next) => {
+  const {
+    params: { guildId },
+    cache,
+  } = req;
+
+  const tickets = await Tickets.find({ guildId }).populate("panelId");
+
+  sendResponse(req, res, { cache, tickets });
 });
 
 exports.getPanelById = catchAsync(async (req, res, next) => {
@@ -53,7 +61,6 @@ exports.createPanel = catchAsync(async (req, res, next) => {
       16
     );
 
-  body.creatorName = req.discorsUser.username;
   const doc = await Panels.create({ guildId, ...body });
 
   sendResponse(req, res, { cache, doc });

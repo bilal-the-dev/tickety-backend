@@ -151,7 +151,7 @@ exports.isAdmin = catchAsync(async (req, res, next) => {
     discordUser,
   } = req;
 
-  const response = await checkIsAdmin(guildId, discordUser.userId);
+  const response = await checkIsAdmin(guildId, discordUser.id);
 
   if (!response.isAdmin)
     throw new AppError("You are not authorized to perform this operation", 403);
