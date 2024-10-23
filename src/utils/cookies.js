@@ -12,6 +12,7 @@ exports.setJWTCookie = async (user, req, res) => {
     ),
     httpOnly: process.env === "production",
     secure: req.secure || req.headers["x-forwarded-proto"] === "https",
+    sameSite : process.env === "production" ? 'None' : 'lax',
   });
 
   sendResponse(req, res, user);
