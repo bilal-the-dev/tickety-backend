@@ -19,7 +19,7 @@ const router = express.Router();
 router.use(addCacheIfInQuery);
 
 router.get("/guild/:guildId/", isAdmin, getPanelsForGuild);
-router.get("/tickets/:guildId/", getAllTickets);
+router.get("/tickets/:guildId/", isAdmin, getAllTickets);
 router.get("/:panelId", getPanelById);
 
 router.post("/:guildId/", isAdmin, createPanel);
