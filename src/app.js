@@ -33,8 +33,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use((req, res, next) => {
   console.log(req.headers);
-  console.log(req.url);
-  console.log(req.baseUrl);
+  console.log(req.cookies);
   console.log(req.secure);
   console.log(req.hostname);
   console.log(req.ip);
